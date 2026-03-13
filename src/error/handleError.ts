@@ -1,7 +1,12 @@
 import axios from "axios";
-import { FirebaseError } from "firebase/app";
 import { firebaseAuthErrorMessageMap } from "./firebaseAuthErrorMessageMap";
 import { axiosErrorMessageMap } from "./axiosErrorMessageMap";
+
+type FirebaseErrorLike = {
+    code: string;
+    message: string;
+    name?: string;
+};
 
 export interface ApiErrorResponse {
     success: boolean;
@@ -63,18 +68,13 @@ export function isApiErrorResponse(data: unknown): data is ApiErrorResponse {
     );
 }
 
-function isFirebaseError(e: unknown): e is FirebaseError {
-    // 웹 SDK에서는 보통 `instanceof FirebaseError`가 동작하지만,
-    // 번들/중복 의존성 상황에서 깨질 수 있어 shape-check를 같이 둡니다. (확실하지 않음)
-    if (e instanceof FirebaseError) return true;
-
+function isFirebaseError(e: unknown): e is FirebaseErrorLike {
     if (typeof e === "object" && e !== null) {
         const any = e as Record<string, unknown>;
         return (
             typeof any["code"] === "string" &&
             typeof any["message"] === "string" &&
-            // FirebaseError는 name이 "FirebaseError"인 경우가 흔함 (SDK/환경에 따라 다를 수 있음)
-            (any["name"] === "FirebaseError" || typeof any["name"] === "string")
+            typeof any["name"] === "string"
         );
     }
     return false;

@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
 
 // Apply the react-native-vector-icons gradle script to copy the font files to the correct location
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")

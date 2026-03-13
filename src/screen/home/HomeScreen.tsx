@@ -42,7 +42,7 @@ export default function HomeScreen({ navigation }: any) {
     // RN에서 로그인 후 커스텀 토큰이 발급되면 웹뷰에 커스텀 토큰 전달
     useEffect(() => {
         if (!customToken) {
-            console.warn('No customToken, 웹뷰 토큰 전달 스킵');
+            console.debug('No customToken, 웹뷰 토큰 전달 스킵');
             return;
         }
 

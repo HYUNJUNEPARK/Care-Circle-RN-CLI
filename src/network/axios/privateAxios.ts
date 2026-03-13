@@ -1,7 +1,8 @@
 import axios from "axios";
-import { getAuth } from "firebase/auth";
+import auth from '../../auth/firebaseAuth';
 import { NETWORK_TIME_OUT } from "../../config/networkConfig";
 import { SERVER_URL } from "../../consts/url";
+import { getIdToken as getAuthIdToken } from '@react-native-firebase/auth';
 
 const privateAxios = axios.create({
   baseURL: SERVER_URL,
@@ -10,10 +11,10 @@ const privateAxios = axios.create({
 
 // Firebase 현재 로그인한 사용자의 ID Token 가져오기
 async function getIdToken(): Promise<string | null> {
-  const auth = getAuth();
   const user = auth.currentUser;
   if (user) {
-    const idToken = await user.getIdToken();
+    //const idToken = await user.getIdToken();
+    const idToken = await getAuthIdToken(user);
     return idToken;
   }
   return null;

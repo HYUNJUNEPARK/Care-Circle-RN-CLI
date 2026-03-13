@@ -1,0 +1,105 @@
+{
+  "project_info": {
+    "project_number": "309755861883",
+    "project_id": "develop-f0f58",
+    "storage_bucket": "develop-f0f58.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309755861883:android:56e123e1b2b2c21dff3bde",
+        "android_client_info": {
+          "package_name": "com.aos.android.passguard.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6zy9sEBC7vREprl3KpIkilCkAqzYfCIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309755861883:android:1733a3146bed1d1bff3bde",
+        "android_client_info": {
+          "package_name": "com.aos.goodideacard.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6zy9sEBC7vREprl3KpIkilCkAqzYfCIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309755861883:android:72294d1c8381f747ff3bde",
+        "android_client_info": {
+          "package_name": "com.canbe.carecircle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6zy9sEBC7vREprl3KpIkilCkAqzYfCIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309755861883:android:624fb4451176d0daff3bde",
+        "android_client_info": {
+          "package_name": "com.canbe.carecircle.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6zy9sEBC7vREprl3KpIkilCkAqzYfCIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309755861883:android:843f9f7d658fdab2ff3bde",
+        "android_client_info": {
+          "package_name": "com.canbe.pado.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6zy9sEBC7vREprl3KpIkilCkAqzYfCIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

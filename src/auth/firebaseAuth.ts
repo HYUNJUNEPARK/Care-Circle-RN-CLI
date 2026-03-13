@@ -1,17 +1,13 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import firebaseConfig from '../config/firebaseConfig';
+import { getApp } from '@react-native-firebase/app';
+import { getAuth } from '@react-native-firebase/auth';
 
-// Firebase 앱이 이미 초기화되어 있으면 재초기화하지 않음
 let app;
 try {
-    app = initializeApp(firebaseConfig);
+    app = getApp();
 } catch (e) {
-    // 이미 초기화된 경우 에러 무시
-    // @ts-ignore
-    app = initializeApp.getApps ? initializeApp.getApps()[0] : null;
     console.warn('Firebase app already initialized, using existing instance.', e);
 }
 
-//export const firebaseApp = app;
-export const auth = getAuth(app);
+const auth = getAuth(app);
+
+export default auth;
