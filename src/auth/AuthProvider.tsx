@@ -1,10 +1,11 @@
 import { createContext, useEffect, useMemo, useState, useCallback } from "react";
 import type { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut, getIdToken } from '@react-native-firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut, getIdToken, reload } from '@react-native-firebase/auth';
 import auth from './firebaseAuth';
 import { getLoginUserInfo, signOut as signOutApi } from '../network/apis/userApis';
 import type { UserInfo } from '../types/local/UserInfo';
 import { getCustomToken } from "../network/apis/tokenApis";
+import { getAuth } from '@react-native-firebase/auth';
 
 /**
  * 인증 관련 상태를 제공하는 Context의 값 타입
@@ -56,10 +57,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const reloadCureentUser = useCallback(async () => {
-        if (auth.currentUser) {
+        const currentUser = getAuth().currentUser;
+        if (currentUser) {
             console.info('called AuthProvider - reloadCurrentUser');
-            await auth.currentUser.reload();
-            setUser({ ...auth.currentUser });
+            // Firebase 사용자 정보 새로고침 (네트워크 통신)
+            await reload(currentUser);
+            const newUserInfo = getAuth().currentUser;
+            setUser(newUserInfo);
         }
     }, []);
 
