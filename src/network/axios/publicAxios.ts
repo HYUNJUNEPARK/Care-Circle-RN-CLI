@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { NETWORK_TIME_OUT } from "../../config/networkConfig";
+import { NETWORK_TIME_OUT } from "../config/networkConfig";
 import { SERVER_URL } from "../../consts/url";
 
 const publicAxios = axios.create({

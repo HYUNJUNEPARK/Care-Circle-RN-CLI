@@ -1,6 +1,6 @@
 import axios from "axios";
 import auth from '../../auth/firebaseAuth';
-import { NETWORK_TIME_OUT } from "../../config/networkConfig";
+import { NETWORK_TIME_OUT } from "../config/networkConfig";
 import { SERVER_URL } from "../../consts/url";
 import { getIdToken as getAuthIdToken } from '@react-native-firebase/auth';
 

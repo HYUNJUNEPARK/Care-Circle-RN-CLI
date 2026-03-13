@@ -13,8 +13,8 @@
     "clean:android": "cd android && ./gradlew clean && cd ..",
     "clean:project": "npx react-native-clean-project",
     "reverse:port": "adb reverse tcp:5173 tcp:5173 && adb reverse tcp:4000 tcp:4000",
-    "android:dev": "npm run reverse:port && npm run kill:mac && ENVFILE=.env.development npx react-native run-android",
-    "android:prod": "ENVFILE=.env.production npx react-native run-android"
+    "android:dev": "npm run reverse:port && npm run kill:mac && ENVFILE=.env.development npx react-native run-android --mode=devDebug --appIdSuffix dev",
+    "android:prod": "ENVFILE=.env.production npx react-native run-android --mode=prodDebug"
   },
   "dependencies": {
     "@react-native-firebase/app": "^23.8.8",
