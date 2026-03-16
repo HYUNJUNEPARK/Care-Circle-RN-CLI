@@ -5,7 +5,18 @@ apply plugin: "com.google.gms.google-services"
 
 // Apply the react-native-vector-icons gradle script to copy the font files to the correct location
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
+
+
+
 // Apply the react-native-config gradle script to read the .env file and set the environment variables
+// android 에서 flavor를 쓰기 시작하 뒤에는 매핑을 명시적으로 넣는 편이 안정적임
+project.ext.envConfigFiles = [
+        devdebug: ".env.development",
+        devrelease: ".env.development",
+        proddebug: ".env.production",
+        prodrelease: ".env.production",
+]
+
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 /**
@@ -90,6 +101,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+
+        //react-native-config 공식 안내도, Android에서 applicationIdSuffix 등을 사용할 때 build_config_package를 추가하는 것을 권장
+        resValue "string", "build_config_package", "com.canbe.carecircle"
     }
     flavorDimensions "env"
 

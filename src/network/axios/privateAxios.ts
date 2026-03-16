@@ -28,6 +28,7 @@ privateAxios.interceptors.request.use(
       config.headers = config.headers ?? {};
       config.headers.Authorization = `Bearer ${idToken}`;
     }
+    console.log('Private API 요청:', config.method, config.baseURL, config.url);
     return config;
   },
   (error) => Promise.reject(error)
@@ -35,11 +36,14 @@ privateAxios.interceptors.request.use(
 
 // 응답 인터셉터
 privateAxios.interceptors.response.use(
-  res => res,
-    async error => {
-        console.log('Axios interceptors error:', error);
-        return Promise.reject(error)
-    }
+  res => {
+    console.log('Private API 응답:', res.config.method, res.config.url, res.status, res.data);
+    return res;
+  },
+  async error => {
+    console.log('Private API interceptors error:', error);
+    return Promise.reject(error)
+  }
 );
 
 export default privateAxios;
