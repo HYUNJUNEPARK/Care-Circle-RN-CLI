@@ -10,15 +10,15 @@ const fcmApiUrl = `/api/fcm`;
  * 특정 사용자에게 push 알림을 보낼 때 사용
  */
 export async function sendTokenToServer(
-    userId: string | null = null,
+    uid: string | undefined,
     fcmToken: string,
     platform: string
 ): Promise<void> {
   try {
-    const res = await publicAxios.post<FcmTokenResponse>(
+    await publicAxios.post<FcmTokenResponse>(
       `${fcmApiUrl}/register`,
       {
-        userId: userId,
+        uid: uid ?? '',
         fcmToken: fcmToken,
         platform: platform,
 

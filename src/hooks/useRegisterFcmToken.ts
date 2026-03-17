@@ -1,6 +1,8 @@
 import { Platform } from 'react-native';
 import { sendTokenToServer } from '../network/apis/fcmApis';
 import messaging from '@react-native-firebase/messaging';
+import auth from '../auth/firebaseAuth';
+
 /**
  * FCM 토큰을 발급받아 서버에 등록하는 커스텀 훅
  *
@@ -8,14 +10,13 @@ import messaging from '@react-native-firebase/messaging';
  * - 토큰이 없거나 등록 실패 시 콘솔에 에러 출력
  */
 function useRegisterFcmToken() {
-    const registerToken = async (userId: string | null = null) => {
+    const registerToken = async () => {
         try {
-            await messaging().registerDeviceForRemoteMessages();
-
+            const uid = auth.currentUser?.uid;
             const fcmToken = await messaging().getToken();
 
             if (fcmToken) {
-                await sendTokenToServer(userId, fcmToken, Platform.OS);
+                await sendTokenToServer(uid, fcmToken, Platform.OS);
             } else {
                 console.warn('FCM 토큰을 가져오지 못했습니다.');
             }

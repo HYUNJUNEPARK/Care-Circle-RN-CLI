@@ -82,7 +82,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
             // 2. Custom Token 발급 (Firebase ID Token)
-            //const idToken = await userCredential.user.getIdToken();
             const idToken = await getIdToken(userCredential.user);
             const customToken = await getCustomToken(idToken);
 

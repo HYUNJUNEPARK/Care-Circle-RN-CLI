@@ -8,6 +8,7 @@ import { appIcon, appText } from '../../../assets';
 import useAuth from '../../auth/useAuth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Checkbox from '../../components/checkbox/Checkbox';
+import useRegisterFcmToken from '../../hooks/useRegisterFcmToken';
 interface SignInScreenProps {
   navigation: any;
 }
@@ -18,7 +19,7 @@ const SignInScreen = ({ navigation }: SignInScreenProps) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { logInWithEmail, isLoading } = useAuth();
-
+  const { registerToken } = useRegisterFcmToken();
 
   //최초 진입 시 저장된 아이디 불러오기
   useEffect(() => {
@@ -58,6 +59,9 @@ const SignInScreen = ({ navigation }: SignInScreenProps) => {
 
       const isSucess = await logInWithEmail(id.trim(), password);
       if (isSucess) {
+        // 로그인 성공 시 FCM 토큰 등록
+        await registerToken();
+
         navigation.goBack();
       }
 

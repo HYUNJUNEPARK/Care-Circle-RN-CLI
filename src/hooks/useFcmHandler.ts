@@ -36,7 +36,8 @@ export function useFcmHandler() {
         //   }
         // );
         const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
-            console.log('포그라운드 상태에서 메시지 수신:', remoteMessage);
+            // console.log('포그라운드 상태에서 메시지 수신:', remoteMessage);
+            
         });
 
         // 백그라운드에서 알림 클릭 시
