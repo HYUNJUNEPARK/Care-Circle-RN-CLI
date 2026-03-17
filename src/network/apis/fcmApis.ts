@@ -9,16 +9,21 @@ const fcmApiUrl = `/api/fcm`;
  * 서버는 이 token을 저장해두고
  * 특정 사용자에게 push 알림을 보낼 때 사용
  */
-export async function sendTokenToServer(fcmToken: string, platform: string): Promise<void> {
+export async function sendTokenToServer(
+    userId: string | null = null,
+    fcmToken: string,
+    platform: string
+): Promise<void> {
   try {
     const res = await publicAxios.post<FcmTokenResponse>(
-        `${fcmApiUrl}/register`,
-        {
-            fcmToken: fcmToken,
-            platform: platform,
+      `${fcmApiUrl}/register`,
+      {
+        userId: userId,
+        fcmToken: fcmToken,
+        platform: platform,
 
-        },
-        {}
+      },
+      {}
     );
   } catch (error) {
     console.error('sendTokenToServer:', error);
