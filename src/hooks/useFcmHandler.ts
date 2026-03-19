@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import messaging from '@react-native-firebase/messaging';
+import notifee, { AndroidImportance } from '@notifee/react-native';
 
 /**
  * FCM 초기화 및 Foreground 메시지 리스너 등록 커스텀 훅
@@ -36,8 +37,27 @@ export function useFcmHandler() {
         //   }
         // );
         const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
-            // console.log('포그라운드 상태에서 메시지 수신:', remoteMessage);
-            
+          console.log('포그라운드 상태에서 메시지 수신:', remoteMessage);
+
+          const { data } = remoteMessage;
+
+          // 채널 생성 (Android 필수)
+          const channelId = await notifee.createChannel({
+            id: 'default',
+            name: '기본 알림',
+            importance: AndroidImportance.HIGH,
+          });
+
+          // 로컬 알림 표시
+          await notifee.displayNotification({
+            title: remoteMessage.notification?.title ?? 'ABC',
+            body: remoteMessage.notification?.body ?? 'ABC.',
+            android: {
+              channelId,
+              smallIcon: 'ic_launcher', // android/app/src/main/res/drawable에 아이콘 추가 필요
+              pressAction: { id: 'default' },
+            },
+          });
         });
 
         // 백그라운드에서 알림 클릭 시

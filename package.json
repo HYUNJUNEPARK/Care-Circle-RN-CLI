@@ -14,10 +14,12 @@
     "clean:project": "npx react-native-clean-project",
     "clean:all": "npm run clean:android && npm run clean:project",
     "reverse:port": "adb reverse tcp:5173 tcp:5173 && adb reverse tcp:4000 tcp:4000",
+    "reverse:port:rn": "adb reverse tcp:8081 tcp:8081",
     "android:dev": "npm run reverse:port && npm run kill:mac && ENVFILE=.env.development npx react-native run-android --mode=devDebug --appIdSuffix dev",
     "android:prod": "ENVFILE=.env.production npx react-native run-android --mode=prodDebug"
   },
   "dependencies": {
+    "@notifee/react-native": "^9.1.8",
     "@react-native-firebase/app": "^23.8.8",
     "@react-native-firebase/auth": "^23.8.8",
     "@react-native-firebase/messaging": "^23.8.8",
