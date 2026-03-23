@@ -55,13 +55,20 @@ export function useFcmHandler() {
           await notifee.displayNotification({
             title: title,
             body: body,
+            data: { //커스텀 데이터 전달
+              screen: data?.screen ?? 'NONE', // 알림 클릭 시 이동할 화면 정보
+            },
             android: {
               channelId: channelId,
               smallIcon: 'ic_launcher', // android/app/src/main/res/drawable에 아이콘 추가 필요
-              pressAction: { // 알림 클릭 시 전달할 데이터 (선택 사항)
-                id: data?.action.toString() ?? 'NONE'
-                
-              }, 
+              pressAction: { // 알림 클릭 시 전달할 데이터
+                id: data?.action.toString() ?? 'NONE',
+                // launchActivity: 'default',              // 실행할 Activity (기본값: 앱 메인 Activity)
+                // launchActivityFlags: [                  // Activity 실행 플래그
+
+                // ],
+                // mainComponent: 'MyHeadlessComponent',  // Headless JS 컴포넌트 이름
+              },
             },
           });
         });
@@ -70,7 +77,7 @@ export function useFcmHandler() {
         const unsubscribeNotifee = notifee.onForegroundEvent(({ type, detail }) => {
           console.log('포그라운드 알림 Type:', type); //DISMISSED = 0, PRESS = 1, ACTION_PRESS = 2, DELIVERED = 3,
           if (type === EventType.PRESS) {
-            console.log('포그라운드 알림 클릭 EventType.PRESS:', detail.pressAction?.id, detail);
+            console.log(`포그라운드 알림 클릭 EventType.PRESS: ${detail.pressAction?.id} screen: ${detail.notification?.data?.screen}`);
             // 원하는 화면으로 네비게이션 처리
           }
         });
