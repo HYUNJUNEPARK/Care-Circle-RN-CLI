@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import messaging from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance } from '@notifee/react-native';
+import { EventType } from '@notifee/react-native';
 
 /**
  * FCM 초기화 및 Foreground 메시지 리스너 등록 커스텀 훅
@@ -40,6 +41,8 @@ export function useFcmHandler() {
           console.log('포그라운드 상태에서 메시지 수신:', remoteMessage);
 
           const { data } = remoteMessage;
+          const title = (data?.title as string) ?? remoteMessage.notification?.title ?? '알림';
+          const body = (data?.body as string) ?? remoteMessage.notification?.body ?? '메시지가 도착했습니다.';
 
           // 채널 생성 (Android 필수)
           const channelId = await notifee.createChannel({
@@ -50,27 +53,38 @@ export function useFcmHandler() {
 
           // 로컬 알림 표시
           await notifee.displayNotification({
-            title: remoteMessage.notification?.title ?? 'ABC',
-            body: remoteMessage.notification?.body ?? 'ABC.',
+            title: title,
+            body: body,
             android: {
-              channelId,
+              channelId: channelId,
               smallIcon: 'ic_launcher', // android/app/src/main/res/drawable에 아이콘 추가 필요
-              pressAction: { id: 'default' },
+              pressAction: { // 알림 클릭 시 전달할 데이터 (선택 사항)
+                id: data?.action.toString() ?? 'NONE'
+                
+              }, 
             },
           });
         });
 
+        // 포그라운드 알림 클릭 이벤트
+        const unsubscribeNotifee = notifee.onForegroundEvent(({ type, detail }) => {
+          console.log('포그라운드 알림 Type:', type); //DISMISSED = 0, PRESS = 1, ACTION_PRESS = 2, DELIVERED = 3,
+          if (type === EventType.PRESS) {
+            console.log('포그라운드 알림 클릭 EventType.PRESS:', detail.pressAction?.id, detail);
+            // 원하는 화면으로 네비게이션 처리
+          }
+        });
+
         // 백그라운드에서 알림 클릭 시
-        const unsubscribeOpened = messaging().onNotificationOpenedApp(
-          (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-            console.log('백그라운드 상태에서 알림 클릭 시', remoteMessage);
-          },
+        const unsubscribeOpened = messaging().onNotificationOpenedApp((remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
+          console.log('백그라운드 상태에서 알림 클릭 시 remoteMessage:', remoteMessage);
+        },
         );
 
         // 앱 종료 상태에서 알림 클릭 시
         const initialMessage = await messaging().getInitialNotification();
         if (initialMessage) {
-          console.log('앱 종료 상태에서 알림 클릭 시', initialMessage);
+          console.log('앱 종료 상태에서 알림 클릭 시 initialMessage:', initialMessage);
         }
 
         /*
@@ -90,6 +104,7 @@ export function useFcmHandler() {
 
         // 언마운트 시 리스너 해제
         return () => {
+          unsubscribeNotifee();
           unsubscribeOnMessage();
           unsubscribeOpened();
           unsubscribeTokenRefresh();
