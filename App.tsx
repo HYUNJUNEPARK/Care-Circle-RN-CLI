@@ -8,6 +8,7 @@ import { TextModalProvider } from './src/components/modals/TextModalProvider';
 import { AuthProvider } from './src/auth/AuthProvider';
 import { StatusBar } from 'react-native';
 import { useFcmHandler } from './src/hooks/useFcmHandler';
+import { navigationRef } from './src/navigator/navigationRef';
 import notifee, { AndroidImportance } from '@notifee/react-native';
 
 /**
@@ -42,7 +43,8 @@ function App() {
         <SafeAreaProvider>
           {/* <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /> */}
           <StatusBar barStyle={'dark-content'} />
-          <NavigationContainer>
+          {/* useFcmHandler는 NavigationContainer 외부(App.tsx)에서 호출되므로 useNavigation()을 직접 쓸 수 없음. 외부에서도 네비게이션을 사용할 수 있는 ref 를 연결 */}
+          <NavigationContainer ref={navigationRef}>
             <StackNavigator />
           </NavigationContainer>
         </SafeAreaProvider>
