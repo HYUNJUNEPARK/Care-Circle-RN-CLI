@@ -19,20 +19,20 @@ import notifee, { AndroidImportance } from '@notifee/react-native';
  * iOS에서는 채널 개념이 없으므로 이 함수는 Android에서만 효과가 있습니다.
  * 앱이 시작될 때 이 함수를 호출하여 채널을 생성하면, FCM에서 수신된 알림이 올바르게 표시될 수 있습니다.
  */
-async function createDefaultChannel() {
-  await notifee.createChannel({
-    id: 'default',
-    name: 'Default Channel',
-    importance: AndroidImportance.HIGH,
-  });
-}
+// async function createDefaultChannel() {
+//   await notifee.createChannel({
+//     id: 'default',
+//     name: 'Default Channel',
+//     importance: AndroidImportance.HIGH,
+//   });
+// }
 
 
 function App() {
   //const isDarkMode = useColorScheme() === 'dark';
 
   // 앱 초기화 시 기본 알림 채널 생성
-  createDefaultChannel();
+  // createDefaultChannel();
 
   // FCM 초기화 및 리스너 등록
   useFcmHandler();

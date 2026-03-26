@@ -6,6 +6,7 @@ import { EventType } from '@notifee/react-native';
 import { navigationRef } from '../navigator/navigationRef';
 import { WEB_URL } from '../consts/url';
 import { FcmActionType, FcmScreenType, isFcmActionType, isFcmScreenType } from '../types/local/fcmTypes';
+import { handleFcmNotificationNavigation } from '../utils/fcmNavigation';
 
 /**
  * FCM 초기화 및 Foreground 메시지 리스너 등록 커스텀 훅
@@ -100,15 +101,39 @@ export function useFcmHandler() {
           }
         });
 
-        // 백그라운드에서 알림 클릭 시
+        // 백그라운드에서 알림 클릭 시 (FCM notification 타입 메시지)
         const unsubscribeOpened = messaging().onNotificationOpenedApp((remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
           console.log('백그라운드 상태에서 알림 클릭 시 remoteMessage:', remoteMessage);
+          const { data } = remoteMessage;
+          handleFcmNotificationNavigation(
+            data?.action?.toString(),
+            data?.screen?.toString(),
+            data?.contentId?.toString(),
+          );
         });
 
-        // 앱 종료 상태에서 알림 클릭 시
+        // 앱 종료 상태에서 FCM 알림 클릭 시
         const initialMessage = await messaging().getInitialNotification();
         if (initialMessage) {
           console.log('앱 종료 상태에서 알림 클릭 시 initialMessage:', initialMessage);
+          const { data } = initialMessage;
+          handleFcmNotificationNavigation(
+            data?.action?.toString(),
+            data?.screen?.toString(),
+            data?.contentId?.toString(),
+          );
+        }
+
+        // 앱 종료 상태에서 notifee 로컬 알림 클릭 시 (백그라운드 핸들러에서 생성된 알림)
+        const initialNotification = await notifee.getInitialNotification();
+        if (initialNotification) {
+          console.log('앱 종료 상태에서 notifee 알림 클릭:', initialNotification);
+          const { pressAction, notification } = initialNotification;
+          handleFcmNotificationNavigation(
+            pressAction?.id,
+            notification?.data?.screen?.toString(),
+            notification?.data?.contentId?.toString(),
+          );
         }
 
         /*
