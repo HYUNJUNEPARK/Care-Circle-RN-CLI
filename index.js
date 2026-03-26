@@ -22,8 +22,11 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
       importance: AndroidImportance.HIGH,
       // 앱 아이콘 (흰색 단색 아이콘 권장)
       smallIcon: 'ic_launcher',
-      // 알림 클릭 시 data 전달용
-      pressAction: { id: data?.action },
+      // 알림 클릭 시 앱을 실행하고 data 전달
+      pressAction: {
+        id: data?.action?.toString().trim() || 'DEFAULT',
+        launchActivity: 'default', // 앱이 백그라운드에 있을 때 알림 클릭 시 앱을 실행하도록 설정
+      },
     },
     data: {
       screen: data?.screen ?? 'DEFAULT',
@@ -40,11 +43,6 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
  */
 notifee.onBackgroundEvent(async ({ type, detail }) => {
   console.log('백그라운드 메시지 이벤트 Type:', type); //DISMISSED = 0, PRESS = 1, ACTION_PRESS = 2, DELIVERED = 3,
-
-  //알림에 추가된 특정 액션 버튼(예: "확인", "답장" 등)을 클릭했을 때 발생
-  if (type === EventType.ACTION_PRESS) {
-    console.log('백그라운드 메시지 클릭 EventType.ACTION_PRESS', detail);
-  }
 
   //사용자가 알림 전체(알림 본문 영역)를 클릭했을 때 발생(알림 자체를 눌렀을 때 트리거)
   if (type === EventType.PRESS) {

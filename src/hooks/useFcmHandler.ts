@@ -37,6 +37,15 @@ export function useFcmHandler() {
           const title = (data?.title as string) ?? remoteMessage.notification?.title ?? '알림';
           const body = (data?.body as string) ?? remoteMessage.notification?.body ?? '메시지가 도착했습니다.';
 
+          /**
+           * 앱 초기화 시 기본 알림 채널을 생성하는 함수
+           * Android에서는 알림을 표시하기 위해 채널이 필요하므로, 앱이 시작될 때 기본 채널을 만들어줍니다.
+           * 이 채널은 FCM에서 수신된 알림이 표시될 때 사용됩니다.
+           * 채널 ID는 'default'로 설정하고, 중요도는 HIGH로 지정하여 알림이 눈에 띄게 표시되도록 합니다.
+           * iOS에서는 채널 개념이 없으므로 이 함수는 Android에서만 효과가 있습니다.
+           * 앱이 시작될 때 이 함수를 호출하여 채널을 생성하면, FCM에서 수신된 알림이 올바르게 표시될 수 있습니다.
+           */
+          
           // 채널 생성 (Android 필수)
           const channelId = await notifee.createChannel({
             id: 'default',
@@ -55,11 +64,9 @@ export function useFcmHandler() {
             android: {
               channelId: channelId,
               smallIcon: 'ic_launcher', // android/app/src/main/res/drawable에 아이콘 추가 필요
-              pressAction: { // 알림 클릭 시 전달할 데이터
-                id: data?.action?.toString().trim() || 'DEFAULT', // 알림 클릭 시 구분할 수 있는 ID
-                // launchActivity: 'default',              // 실행할 Activity (기본값: 앱 메인 Activity)
-                // launchActivityFlags: [],                  // Activity 실행 플래그   
-                // mainComponent: 'MyHeadlessComponent',  // Headless JS 컴포넌트 이름
+              pressAction: {
+                id: data?.action?.toString().trim() || 'DEFAULT',
+                launchActivity: 'default',
               },
             },
           });
