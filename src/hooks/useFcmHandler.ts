@@ -1,10 +1,11 @@
-import { act, useEffect } from 'react';
+import { useEffect } from 'react';
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import messaging from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance } from '@notifee/react-native';
 import { EventType } from '@notifee/react-native';
 import { navigationRef } from '../navigator/navigationRef';
 import { WEB_URL } from '../consts/url';
+import { FcmActionType, FcmScreenType, isFcmActionType, isFcmScreenType } from '../types/local/fcmTypes';
 
 /**
  * FCM 초기화 및 Foreground 메시지 리스너 등록 커스텀 훅
@@ -66,26 +67,19 @@ export function useFcmHandler() {
         // 포그라운드 알림 클릭 이벤트
         const unsubscribeNotifee = notifee.onForegroundEvent(({ type, detail }) => {
           console.log('포그라운드 알림 Type:', type); //DISMISSED = 0, PRESS = 1, ACTION_PRESS = 2, DELIVERED = 3,
+
+          // 알림 클릭 시
           if (type === EventType.PRESS) {
-            type FcmActionType = 'OPEN_WEBVIEW' | 'DEFAULT';
-            type FcmScreenType = 'ANNOUNCEMENT' | 'COLUMN' | 'DEFAULT';
-
-            function isFcmActionType(value: any): value is FcmActionType {
-              return ['OPEN_WEBVIEW', 'DEFAULT'].includes(value);
-            }
-            function isFcmScreenType(value: any): value is FcmScreenType {
-              return ['ANNOUNCEMENT', 'COLUMN', 'DEFAULT'].includes(value);
-            }
-
             const actionRaw = detail.pressAction?.id;
             const screenRaw = detail.notification?.data?.screen;
             const contentId = detail.notification?.data?.contentId;
-
+            //raw 값이 FcmActionType에 해당하는지 검사한 후, 맞으면 action에 할당하고 아니면 undefined로 처리
             const action: FcmActionType | undefined = isFcmActionType(actionRaw) ? actionRaw : undefined;
             const screen: FcmScreenType | undefined = isFcmScreenType(screenRaw) ? screenRaw : undefined;
 
             console.log(`\n  포그라운드 알림 클릭 \n  EventType.PRESS: ${action}\n  screen: ${screen}\n  contentId: ${contentId}\n`);
 
+            // action과 screen이 유효한 경우에만 네비게이션 처리
             if (action === 'OPEN_WEBVIEW' && screen && contentId) {
               let url = '';
               switch (screen) {
@@ -109,8 +103,7 @@ export function useFcmHandler() {
         // 백그라운드에서 알림 클릭 시
         const unsubscribeOpened = messaging().onNotificationOpenedApp((remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
           console.log('백그라운드 상태에서 알림 클릭 시 remoteMessage:', remoteMessage);
-        },
-        );
+        });
 
         // 앱 종료 상태에서 알림 클릭 시
         const initialMessage = await messaging().getInitialNotification();
