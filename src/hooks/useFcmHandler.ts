@@ -4,6 +4,7 @@ import messaging from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance } from '@notifee/react-native';
 import { EventType } from '@notifee/react-native';
 import { navigationRef } from '../navigator/navigationRef';
+import { WEB_URL } from '../consts/url';
 
 /**
  * FCM 초기화 및 Foreground 메시지 리스너 등록 커스텀 훅
@@ -46,14 +47,14 @@ export function useFcmHandler() {
             title: title,
             body: body,
             data: { //커스텀 데이터 전달
-              screen: data?.screen ?? 'NONE', // 알림 클릭 시 이동할 화면 정보
-              detailIdx: data?.detailIdx ?? '', // 알림 클릭 시 이동할 화면의 추가 정보 (예: 상세 페이지 ID)
+              screen: data?.screen ?? 'DEFAULT', // 알림 클릭 시 이동할 화면 정보
+              contentId: data?.contentId ?? '', // 알림 클릭 시 이동할 화면의 추가 정보 (예: 상세 페이지 ID)
             },
             android: {
               channelId: channelId,
               smallIcon: 'ic_launcher', // android/app/src/main/res/drawable에 아이콘 추가 필요
               pressAction: { // 알림 클릭 시 전달할 데이터
-                id: data?.action.toString() ?? 'NONE',
+                id: data?.action?.toString().trim() || 'DEFAULT', // 알림 클릭 시 구분할 수 있는 ID
                 // launchActivity: 'default',              // 실행할 Activity (기본값: 앱 메인 Activity)
                 // launchActivityFlags: [],                  // Activity 실행 플래그   
                 // mainComponent: 'MyHeadlessComponent',  // Headless JS 컴포넌트 이름
@@ -66,33 +67,42 @@ export function useFcmHandler() {
         const unsubscribeNotifee = notifee.onForegroundEvent(({ type, detail }) => {
           console.log('포그라운드 알림 Type:', type); //DISMISSED = 0, PRESS = 1, ACTION_PRESS = 2, DELIVERED = 3,
           if (type === EventType.PRESS) {
+            type FcmActionType = 'OPEN_WEBVIEW' | 'DEFAULT';
+            type FcmScreenType = 'ANNOUNCEMENT' | 'COLUMN' | 'DEFAULT';
 
-
-            const actionId = detail.pressAction?.id;
-            const screen = detail.notification?.data?.screen;
-            const detailIdx = detail.notification?.data?.detailIdx;
-
-            console.log(`
-              포그라운드 알림 클릭 
-              EventType.PRESS: ${actionId} /
-              screen: ${screen} /
-              detailIdx: ${detailIdx}
-            `);
-
-            if (actionId === 'OPEN_WEBVIEW' && screen === 'DEFAULT') {
-              // const url = detail.notification?.data?.url as string | undefined;
-              // if (url && navigationRef.isReady()) {
-              //   navigationRef.navigate('WebviewViewer', { uri: url });
-              // }
+            function isFcmActionType(value: any): value is FcmActionType {
+              return ['OPEN_WEBVIEW', 'DEFAULT'].includes(value);
             }
-            
-            const url = "https://www.google.com"//detail.notification?.data?.screen as string | undefined;
-            if (url && navigationRef.isReady()) {
-              navigationRef.navigate('WebviewViewer', { uri: url });
+            function isFcmScreenType(value: any): value is FcmScreenType {
+              return ['ANNOUNCEMENT', 'COLUMN', 'DEFAULT'].includes(value);
             }
 
+            const actionRaw = detail.pressAction?.id;
+            const screenRaw = detail.notification?.data?.screen;
+            const contentId = detail.notification?.data?.contentId;
 
+            const action: FcmActionType | undefined = isFcmActionType(actionRaw) ? actionRaw : undefined;
+            const screen: FcmScreenType | undefined = isFcmScreenType(screenRaw) ? screenRaw : undefined;
 
+            console.log(`\n  포그라운드 알림 클릭 \n  EventType.PRESS: ${action}\n  screen: ${screen}\n  contentId: ${contentId}\n`);
+
+            if (action === 'OPEN_WEBVIEW' && screen && contentId) {
+              let url = '';
+              switch (screen) {
+                case 'ANNOUNCEMENT':
+                  url = `${WEB_URL}/announcements/${contentId}`;
+                  break;
+                case 'COLUMN':
+                  url = `${WEB_URL}/columns/${contentId}`;
+                  break;
+                default:
+                  break;
+              }
+              if (url) {
+                navigationRef.navigate('WebviewViewer', { uri: url });
+                return;
+              }
+            }
           }
         });
 
